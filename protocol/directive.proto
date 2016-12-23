@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package protocol;
+
+message Directive {
+  enum Cmd {
+    REGISTER = 0;
+    START_TASK = 1;
+    STOP_TASK = 2;
+    EXECUTE_SHELL = 3;
+    LOG = 4;
+    PING = 5;
+    PONG = 6;
+  }
+  Cmd cmd = 1;
+  string payload = 2;
+}

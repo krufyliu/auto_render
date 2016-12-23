@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package protocol;
+
+message TaskParams {
+  string video_dir = 1;
+  string output_dir = 2;
+  string camera_typ = 3;
+  bool adjust_color = 4;
+  string quality = 5;
+  optional bool enable_top = 6;
+  optional bool enable_bottom = 7;
+}
+
+message Task {
+  unit32 id = 1;
+  string name = 2;
+  string render_alg = 3;
+  sint32 priority = 4;
+  TaskParams params = 5;
+}
