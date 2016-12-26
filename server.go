@@ -8,6 +8,7 @@ import (
 type Server struct {
 	addr     string
 	priority int
+	status   int
 }
 
 type ServerPool struct {
@@ -25,7 +26,10 @@ func NewServerPool() *ServerPool {
 	return &ServerPool{servers: m, idleServers: il, busyServers: bl}
 }
 
-func (this *ServerPool) Start() {
+func (this *ServerPool) Start() bool {
+	if this.started {
+		panic("Pool has already started")
+	}
 	this.started = true
 }
 
