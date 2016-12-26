@@ -9,6 +9,14 @@ type EventManager struct {
     eventChan chan *Event
 }
 
+func NewEM() *EventManager {
+   em :=  &EventManager{
+        eventMap: make(map[string]*handlerContainer),
+        eventMap: make(chan *Event, 1)
+    }
+    go em.process()
+}
+
 func (ec *EventManager) addEventListener(name string, h eventHandler) eventHandler {
     if container, ok := ec.eventMap[name]; ok {
         container.addHander(h)
@@ -37,19 +45,20 @@ func (ec *EventManager) Trigger(name string, data interface{}) *Event{
     return event
 }
 
-func (ec *EventManager) run() {
-    go func() {
-        for event := <- ec.eventChan {
+func (ec *EventManager) process() {
+    go (func() {
+        for event, ok := <- ec.eventChan {
+            if !ok {
+                break
+            }
             name := event.Name
             if container, ok := ec.eventMap[name]; ok {
-                go func {
-                    container.Go(event)
-                }
+                go container.Go(event)
             } else {
                 log.Printf("No handler for event %s\n", name)
             }
         }
-    }
+    })()
 }
 
 type Event struct {
@@ -84,9 +93,5 @@ func (this *handlerContainer) Go(e Event) {
 }
 
 func init() {
-    EM := &EventManager{
-        eventMap: make(map[string]*handlerContainer),
-        eventMap: make(chan *Event, 1)
-    }
-    EM.run()
+    EM := NewEM()
 }
